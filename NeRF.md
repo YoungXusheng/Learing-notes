@@ -16,7 +16,7 @@ NeRF，全称为神经辐射场（Neural Radiance Fields），是一种利用神
 
 学习之前，我们先要搞清楚渲染和反渲染是什么。3D模型可拆分为形状及外观，外观又涵盖material和lighting，经过渲染可得到不同视角的2D图像。
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/c8b7e266-0e15-48a0-a9bd-b65ab1398827.png" title="" alt="c8b7e266-0e15-48a0-a9bd-b65ab1398827" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/c8b7e266-0e15-48a0-a9bd-b65ab1398827.png" title="" alt="c8b7e266-0e15-48a0-a9bd-b65ab1398827" data-align="center">
 
 那么渲染是什么呢？事实上，渲染是计算机图形学中的一个过程，它涉及将三维场景转换为二维图像。这个过程通常包括几何变换、光照计算、纹理映射、着色等步骤，目的是生成视觉上令人信服的图像。在游戏、电影制作、建筑设计等领域，渲染是创建视觉内容的关键技术。 
 
@@ -34,13 +34,13 @@ NeRF，全称为神经辐射场（Neural Radiance Fields），是一种利用神
 
 对于外观表征，要表征出纹理材质以及光照阴影：
 
-<img title="" src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/e8646c64-4db6-4e31-99e8-5aaa8094d6db.png" alt="e8646c64-4db6-4e31-99e8-5aaa8094d6db" style="zoom:67%;" data-align="center">
+<img title="" src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/e8646c64-4db6-4e31-99e8-5aaa8094d6db.png" alt="e8646c64-4db6-4e31-99e8-5aaa8094d6db" style="zoom:67%;" data-align="center">
 
 > 左图为材料及环境光照分开表征的外观表征方式，右图是NeRF中提到的辐射场的表征方式
 
 下方是光线追踪(Ray Tracing)，是一种在计算机图形学中用于生成二维图像的三维场景渲染技术。它模拟了光线如何在场景中传播，并与场景中的对象相互作用，从而产生逼真的视觉效果。
 
-<img title="" src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/84dc57bf-a585-4180-8a9f-eca7c2c647db.png" alt="84dc57bf-a585-4180-8a9f-eca7c2c647db" data-align="center" style="zoom:67%;">
+<img title="" src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/84dc57bf-a585-4180-8a9f-eca7c2c647db.png" alt="84dc57bf-a585-4180-8a9f-eca7c2c647db" data-align="center" style="zoom:67%;">
 
 ## Volume rendering 1
 
@@ -58,15 +58,15 @@ NeRF，全称为神经辐射场（Neural Radiance Fields），是一种利用神
 
 对于空间中的某一发光粒子，假设它的空间坐标是(x,y,z),发射光线穿过相机模型成为图片上的像素坐标(u,v)，粒子的颜色即为像素的颜色。两个坐标之间的转换如下图所示：
 
-<img title="" src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/e80305cd-c674-424c-9025-3090f52c2f03.png" alt="" data-align="center" style="zoom:80%;">
+<img title="" src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/e80305cd-c674-424c-9025-3090f52c2f03.png" alt="" data-align="center" style="zoom:80%;">
 
 > 具体数学公式的推导涉及世界坐标系与像素坐标的转换、齐次坐标与欧式坐标的转换，可以简单理解为world坐标系下的坐标乘相机内参矩阵与外参矩阵(即位姿)可实现w2c(world to camera),RT为旋转和平移矩阵。具体公式的推导可移步鲁鹏的[三维重建课程第一节](https://www.bilibili.com/video/BV1DP41157dB/?spm_id_from=333.1007.top_right_bar_window_custom_collection.content.click&vd_source=2f0cc710f3389150cfb4242bd5d98914)。
 
 上述转换是已知粒子推图片的正向渲染过程。反之，在NeRF中，对于一张图片的某一个像素(u,v)的颜色，可以看作是沿某一条射线上的无数发光点的“和”。利用相机模型可以反推出射线，可以将这条射线表示为*r*(t)=*o*+t*d*,O为原点射线，d为方向，t为距离，可取值0到+∞。对于一张H×W大小的图片，就有H×W条射线。那么怎么从像素点反推射线呢？请看下图，其中f为焦距：
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/bf1921be-6911-4aa1-ae7f-2fa46b0e01aa.png" title="" alt="bf1921be-6911-4aa1-ae7f-2fa46b0e01aa" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/bf1921be-6911-4aa1-ae7f-2fa46b0e01aa.png" title="" alt="bf1921be-6911-4aa1-ae7f-2fa46b0e01aa" data-align="center">
 
-<img title="" src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/67a035ee-8a5e-4399-b3b5-922b7f7db738.png" alt="67a035ee-8a5e-4399-b3b5-922b7f7db738" data-align="center" style="zoom:67%;">
+<img title="" src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/67a035ee-8a5e-4399-b3b5-922b7f7db738.png" alt="67a035ee-8a5e-4399-b3b5-922b7f7db738" data-align="center" style="zoom:67%;">
 
 上述内容其实就是前处理过程。我们已经可以回答上文提出的问题，图片用在哪？怎么得到粒子？事实上，我们会用图片和相机位姿来计算射线，从射线上采样粒子。训练时，我们可以从一张图片中取样1024个像素，得到1024条射线，每条射线上取样64个粒子，一共1024*64个粒子，这里取样的粒子也可以理解为深度学习中的batch，粒子以batch的形式输入模型，矩阵大小是[1024,64,3],其中3是x,y,z。后续会与计算得出的2D位姿一起作为5D向量输入模型，这一部分会在代码解读中详细解释。
 
@@ -102,13 +102,13 @@ NeRF采用自监督[^5]，GT(Ground Truth)即真实值，是图片某一像素�
 
 为了解决上述问题，我们要先引入一个数学公式来求出像素的颜色，它来自NeRF论文原文：
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/605de1ad-5233-4db4-8178-d93f6b79e94d.png" title="" alt="605de1ad-5233-4db4-8178-d93f6b79e94d" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/605de1ad-5233-4db4-8178-d93f6b79e94d.png" title="" alt="605de1ad-5233-4db4-8178-d93f6b79e94d" data-align="center">
 
 > 可以想象一个粒子的前面的粒子异常明亮，则后面的粒子颜色其实会被遮盖，故引入T(s)。T(s)是在s点之前，光线没有被阻碍的概率。σ(s)是在s点处，光线碰击粒子的概率密度(不透明度)，C(s)是在s点处，粒子光的颜色。
 
 T(s)的推导过程如下：
 
-<img title="" src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/0240d6b6-4315-4076-baff-bb7e1fa4face.png" alt="0240d6b6-4315-4076-baff-bb7e1fa4face" data-align="center" style="zoom:67%;">
+<img title="" src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/0240d6b6-4315-4076-baff-bb7e1fa4face.png" alt="0240d6b6-4315-4076-baff-bb7e1fa4face" data-align="center" style="zoom:67%;">
 
 第一行公式的意思是，在射线上一点s处，其后方ds长度之后的点光线没有被阻碍的概率等于在s点没有被阻拦的概率乘以ds这一段没有被阻拦的概率，σ(s)的图像如下图所示。密度越大，被阻碍的概率就越大。故未被阻拦的概率是(1-σ(s)ds)。后续的计算则是基本的微积分计算，值得注意的是T(0)是在开始时被阻碍的概率，此时必然不会被阻碍故值为0。
 
@@ -116,7 +116,7 @@ T(s)的推导过程如下：
 
 值得注意的是上述公式是一个连续的积分，而计算机只能处理离散的数据，故我们需要离散化数据。将光线分为n个等间距区间，假设区间内密度和颜色固定,下图是与上述公式等价的公式。
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/99e01a17-edf1-4786-93b5-afb4d44d5d9a.png" title="" alt="99e01a17-edf1-4786-93b5-afb4d44d5d9a" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/99e01a17-edf1-4786-93b5-afb4d44d5d9a.png" title="" alt="99e01a17-edf1-4786-93b5-afb4d44d5d9a" data-align="center">
 
 现在，可以回答在Volume rendering 1中提出的问题，即如何把粒子渲染成新的图片。步骤如下：
 
@@ -130,7 +130,7 @@ T(s)的推导过程如下：
 
 我们终于可以理清大概的脉络。已知模型输入其实是一个5D向量，网络可以得到粒子的位置，因为这些粒子是从我们对图片中每个像素所定义的射线上均匀采样得到，但此时我们并不知道粒子的颜色。对于每个采样点，使用NeRF的神经网络模型预测该点的颜色 C 和密度 σ，通过体渲染的方法，沿射线积分来计算最终的像素颜色。根据每个采样点的贡献（颜色乘以透明度），从射线的近端到远端逐步累积颜色，最终得到我们的预测值。
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/4869c631-8f7a-4e94-9106-cf08f607a829.png" title="" alt="4869c631-8f7a-4e94-9106-cf08f607a829" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/4869c631-8f7a-4e94-9106-cf08f607a829.png" title="" alt="4869c631-8f7a-4e94-9106-cf08f607a829" data-align="center">
 
 > a图中粒子为黑色，代表此时粒子颜色未知。b图表明我们其实是用射线上的一排粒子来计算像素的颜色。
 
@@ -249,7 +249,7 @@ print(arr2 [ [0,1,2],[2,1,0])
 
 - 向量切片：索引负责其指向区域的右侧一个单元格
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/9b4796f5-4bb4-4812-a2cd-575a14a2294f.png" title="" alt="9b4796f5-4bb4-4812-a2cd-575a14a2294f" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/9b4796f5-4bb4-4812-a2cd-575a14a2294f.png" title="" alt="9b4796f5-4bb4-4812-a2cd-575a14a2294f" data-align="center">
 
 ```
 arr1 = np.arange(10)
@@ -1204,7 +1204,7 @@ class Embedder:
 
 位置编码请结合下图理解：
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/0182f342-2487-4fe6-a13e-b45918f23ad3.png" title="" alt="0182f342-2487-4fe6-a13e-b45918f23ad3" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/0182f342-2487-4fe6-a13e-b45918f23ad3.png" title="" alt="0182f342-2487-4fe6-a13e-b45918f23ad3" data-align="center">
 
 ### NeRF(nn.Module):
 
@@ -1295,7 +1295,7 @@ class NeRF(nn.Module):
 
 ```
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/223131a0-2e9a-43b1-8f03-02bf74cc3c72.png" title="" alt="223131a0-2e9a-43b1-8f03-02bf74cc3c72" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/223131a0-2e9a-43b1-8f03-02bf74cc3c72.png" title="" alt="223131a0-2e9a-43b1-8f03-02bf74cc3c72" data-align="center">
 
 那么在执行完Create_nerf之后，我们得到了些什么参数呢？
 
@@ -1522,7 +1522,7 @@ N_rand = args.N_rand
 
 相机成像满足下方公式。焦距实际上是很小的，一般以毫米为单位。而物距通常都是几米以上，故物距取倒数可以近似为0。所以像距与焦距是近似的，从而得出长焦镜头拍的物体比标准镜头大，短焦镜头中的物体会变小。**所以焦距会影响成像**。
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/8a62bcb6-7a90-4af9-a068-4a047340ac55.png" title="" alt="8a62bcb6-7a90-4af9-a068-4a047340ac55" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/8a62bcb6-7a90-4af9-a068-4a047340ac55.png" title="" alt="8a62bcb6-7a90-4af9-a068-4a047340ac55" data-align="center">
 
 首先，明确两件事：
 
@@ -1533,11 +1533,11 @@ N_rand = args.N_rand
 
 所以我们就可以得到射线的方向向量是：
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/068ec30d-fed1-45b0-b678-c425f8008431.png" title="" alt="068ec30d-fed1-45b0-b678-c425f8008431" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/068ec30d-fed1-45b0-b678-c425f8008431.png" title="" alt="068ec30d-fed1-45b0-b678-c425f8008431" data-align="center">
 
 因为是向量，我们可以把整个向量除以焦距f归一化z坐标，得到：
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/9427c1b6-fc3d-4197-9297-d788a09cc151.png" title="" alt="9427c1b6-fc3d-4197-9297-d788a09cc151" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/9427c1b6-fc3d-4197-9297-d788a09cc151.png" title="" alt="9427c1b6-fc3d-4197-9297-d788a09cc151" data-align="center">
 
 接着只需要用c2w矩阵把相机坐标系下的相机中心和射线方向变换到世界坐标系就搞定了。
 
