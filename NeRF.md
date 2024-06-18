@@ -28,7 +28,7 @@ NeRF，全称为神经辐射场（Neural Radiance Fields），是一种利用神
 
 常见的形状表征方式如下图所示：
 
-<img src="file:///C:/Users/HP/Desktop/markdown/%E5%9B%BE%E7%89%87%E5%BA%93.assets/731a32c8-e568-4292-94c3-ccc5f3c7d039.png" title="" alt="731a32c8-e568-4292-94c3-ccc5f3c7d039" data-align="center">
+<img src="file:///C:/Users/HP/Desktop/markdown/图片库.assets/731a32c8-e568-4292-94c3-ccc5f3c7d039.png" title="" alt="731a32c8-e568-4292-94c3-ccc5f3c7d039" data-align="center">
 
 > 不同的形状表征方式有着不同的表征难度、优化特点
 
